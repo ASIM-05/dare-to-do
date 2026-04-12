@@ -1,0 +1,1 @@
+CREATE POLICY "Anyone can find groups by invite code" ON public.groups FOR SELECT TO authenticated USING (true);
