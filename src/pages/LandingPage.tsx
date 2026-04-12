@@ -1,50 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Trophy, Target, Users, Zap, Flame, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const features = [
-  {
-    icon: Target,
-    title: "Daily Tasks",
-    description: "Set goals, crush them daily. Your tasks, your rules.",
-  },
-  {
-    icon: Users,
-    title: "Social Pressure",
-    description: "Friends verify your tasks. No hiding, no excuses.",
-  },
-  {
-    icon: Zap,
-    title: "Dare Engine",
-    description: "Fail a task? Face a dare. Complete it or lose points.",
-  },
-  {
-    icon: Trophy,
-    title: "Leaderboards",
-    description: "Compete with friends. Climb the ranks. Be legendary.",
-  },
-  {
-    icon: Flame,
-    title: "Streaks",
-    description: "Build unstoppable momentum. Don't break the chain.",
-  },
-  {
-    icon: Shield,
-    title: "Anti-Cheat",
-    description: "Friends verify. Proof required. No faking allowed.",
-  },
+  { icon: Target, title: "Daily Tasks", description: "Set goals, crush them daily. Your tasks, your rules." },
+  { icon: Users, title: "Social Pressure", description: "Friends verify your tasks. No hiding, no excuses." },
+  { icon: Zap, title: "Dare Engine", description: "Fail a task? Face a dare. Complete it or lose points." },
+  { icon: Trophy, title: "Leaderboards", description: "Compete with friends. Climb the ranks. Be legendary." },
+  { icon: Flame, title: "Streaks", description: "Build unstoppable momentum. Don't break the chain." },
+  { icon: Shield, title: "Anti-Cheat", description: "Friends verify. Proof required. No faking allowed." },
 ];
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStart = () => {
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/auth");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background bg-grid relative overflow-hidden">
-      {/* Ambient glow effects */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-0 right-0 w-[400px] h-[400px] bg-dare/5 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Navbar */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
           <Flame className="w-8 h-8 text-primary" />
@@ -53,16 +37,23 @@ const LandingPage = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/dashboard")}>
-            Dashboard
-          </Button>
-          <Button variant="hero" size="lg" onClick={() => navigate("/dashboard")}>
-            Get Started
-          </Button>
+          {user ? (
+            <Button variant="hero" size="lg" onClick={() => navigate("/dashboard")}>
+              Dashboard
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={() => navigate("/auth")}>
+                Sign In
+              </Button>
+              <Button variant="hero" size="lg" onClick={() => navigate("/auth")}>
+                Get Started
+              </Button>
+            </>
+          )}
         </div>
       </nav>
 
-      {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-32 max-w-5xl mx-auto">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/10 mb-8 animate-pulse-glow">
           <Zap className="w-4 h-4 text-primary" />
@@ -81,15 +72,14 @@ const LandingPage = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button variant="hero" size="lg" className="text-lg px-10 py-6" onClick={() => navigate("/dashboard")}>
+          <Button variant="hero" size="lg" className="text-lg px-10 py-6" onClick={handleStart}>
             Start Your Streak 🔥
           </Button>
-          <Button variant="outline" size="lg" className="text-lg px-10 py-6 border-muted-foreground/30" onClick={() => navigate("/dashboard")}>
+          <Button variant="outline" size="lg" className="text-lg px-10 py-6 border-muted-foreground/30" onClick={handleStart}>
             See How It Works
           </Button>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-8 mt-20">
           {[
             { value: "10K+", label: "Active Users" },
@@ -104,7 +94,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features */}
       <section className="relative z-10 px-6 pb-32 max-w-7xl mx-auto">
         <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-4">
           HOW IT <span className="text-primary">WORKS</span>
@@ -130,7 +119,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="relative z-10 px-6 pb-32 max-w-4xl mx-auto text-center">
         <div className="p-12 rounded-2xl bg-card border border-primary/20 glow-primary">
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-foreground">
@@ -139,7 +127,7 @@ const LandingPage = () => {
           <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
             Join thousands who are crushing their goals through social pressure and gamification.
           </p>
-          <Button variant="hero" size="lg" className="text-lg px-12 py-6" onClick={() => navigate("/dashboard")}>
+          <Button variant="hero" size="lg" className="text-lg px-12 py-6" onClick={handleStart}>
             Join DareUp Now 🚀
           </Button>
         </div>
