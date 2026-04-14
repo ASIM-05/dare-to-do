@@ -9,6 +9,7 @@ import AddTaskDialog from "@/components/AddTaskDialog";
 import GroupsSidebar from "@/components/GroupsSidebar";
 import DarePickerDialog from "@/components/DarePickerDialog";
 import UserProfileDialog from "@/components/UserProfileDialog";
+import CompletionShareDialog from "@/components/CompletionShareDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -40,8 +41,8 @@ const Dashboard = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [profile, setProfile] = useState<{ total_points: number; current_streak: number } | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [showCompletionShare, setShowCompletionShare] = useState(false);
 
-  // Fetch tasks
   useEffect(() => {
     if (!user) return;
     const fetchTasks = async () => {
@@ -64,7 +65,6 @@ const Dashboard = () => {
     fetchTasks();
   }, [user]);
 
-  // Fetch profile
   useEffect(() => {
     if (!user) return;
     supabase
@@ -77,7 +77,6 @@ const Dashboard = () => {
       });
   }, [user]);
 
-  // Fetch leaderboard
   useEffect(() => {
     supabase
       .from("profiles")
@@ -92,12 +91,13 @@ const Dashboard = () => {
   const completeTask = async (id: string) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: "completed" as const } : t)));
     await supabase.from("tasks").update({ status: "completed" }).eq("id", id);
-    // Add points
     if (profile) {
       const newPoints = profile.total_points + 10;
       await supabase.from("profiles").update({ total_points: newPoints }).eq("user_id", user!.id);
       setProfile({ ...profile, total_points: newPoints });
     }
+    // Show completion share dialog
+    setShowCompletionShare(true);
   };
 
   const failTask = async (id: string) => {
@@ -116,11 +116,7 @@ const Dashboard = () => {
     if (!user) return;
     const { data, error } = await supabase
       .from("tasks")
-      .insert({
-        user_id: user.id,
-        title,
-        group_id: selectedGroupId,
-      })
+      .insert({ user_id: user.id, title, group_id: selectedGroupId })
       .select()
       .single();
 
@@ -152,29 +148,24 @@ const Dashboard = () => {
   const completed = tasks.filter((t) => t.status === "completed").length;
   const failed = tasks.filter((t) => t.status === "failed").length;
   const pending = tasks.filter((t) => t.status === "pending").length;
+  const displayName = user?.user_metadata?.full_name || user?.email || "User";
 
   return (
     <div className="min-h-screen bg-background bg-grid relative flex">
       <div className="fixed top-0 left-1/4 w-[600px] h-[400px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Left Sidebar - Groups */}
       <GroupsSidebar selectedGroupId={selectedGroupId} onSelectGroup={setSelectedGroupId} />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Bar with Leaderboard */}
         <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border px-6 py-3">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Flame className="w-6 h-6 text-primary" />
-                <span className="font-display text-lg font-bold tracking-wider">
-                  DARE<span className="text-primary">UP</span>
-                </span>
-              </div>
+            <div className="flex items-center gap-2">
+              <Flame className="w-6 h-6 text-primary" />
+              <span className="font-display text-lg font-bold tracking-wider">
+                DARE<span className="text-primary">UP</span>
+              </span>
             </div>
 
-            {/* Stats + Mini Leaderboard in header */}
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2 text-primary">
                 <Trophy className="w-5 h-5" />
@@ -185,7 +176,6 @@ const Dashboard = () => {
                 <span className="font-display font-bold">{streak} day streak</span>
               </div>
 
-              {/* Mini leaderboard */}
               <div className="hidden md:flex items-center gap-1 border-l border-border pl-4">
                 <Medal className="w-4 h-4 text-yellow-400" />
                 <div className="flex items-center gap-2">
@@ -212,7 +202,6 @@ const Dashboard = () => {
         </header>
 
         <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-8">
-          {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <StatsCard icon={Trophy} label="Points" value={points} color="primary" />
             <StatsCard icon={Check} label="Completed" value={completed} color="success" />
@@ -220,7 +209,6 @@ const Dashboard = () => {
             <StatsCard icon={Target} label="Pending" value={pending} color="muted" />
           </div>
 
-          {/* Leaderboard Bar */}
           <div className="rounded-xl bg-card border border-border p-4 mb-8">
             <div className="flex items-center gap-2 mb-3">
               <Trophy className="w-5 h-5 text-primary" />
@@ -253,24 +241,22 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Tasks */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-display text-2xl font-bold text-foreground">Today's Tasks</h2>
-              <Button variant="hero" size="sm" onClick={() => setShowAddTask(true)}>
-                <Plus className="w-4 h-4 mr-1" /> Add Task
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="dare" size="sm" onClick={() => setShowDarePicker(true)}>
+                  <Zap className="w-4 h-4 mr-1" /> Generate Dare
+                </Button>
+                <Button variant="hero" size="sm" onClick={() => setShowAddTask(true)}>
+                  <Plus className="w-4 h-4 mr-1" /> Add Task
+                </Button>
+              </div>
             </div>
 
             <div className="space-y-3">
               {tasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onComplete={completeTask}
-                  onFail={failTask}
-                  onDelete={deleteTask}
-                />
+                <TaskItem key={task.id} task={task} onComplete={completeTask} onFail={failTask} onDelete={deleteTask} />
               ))}
               {tasks.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground">
@@ -280,12 +266,8 @@ const Dashboard = () => {
               )}
             </div>
 
-            {/* Active Dare (solo mode) */}
             {activeDare && (
-              <DareCard
-                onComplete={handleDareComplete}
-                onDismiss={() => setActiveDare(null)}
-              />
+              <DareCard onComplete={handleDareComplete} onDismiss={() => setActiveDare(null)} />
             )}
           </div>
         </main>
@@ -304,6 +286,15 @@ const Dashboard = () => {
         userName={selectedUser}
         open={!!selectedUser}
         onOpenChange={(open) => !open && setSelectedUser(null)}
+      />
+      <CompletionShareDialog
+        open={showCompletionShare}
+        onOpenChange={setShowCompletionShare}
+        completed={completed}
+        total={tasks.length}
+        streak={streak}
+        points={points}
+        userName={displayName}
       />
     </div>
   );
