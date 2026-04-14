@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Plus, LogIn, Copy, Crown, ChevronRight } from "lucide-react";
+import { Users, Plus, LogIn, Copy, Crown, Target } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -19,7 +20,6 @@ interface Group {
   description: string | null;
   invite_code: string;
   created_by: string;
-  member_count?: number;
 }
 
 interface GroupsSidebarProps {
@@ -74,7 +74,6 @@ const GroupsSidebar = ({ selectedGroupId, onSelectGroup }: GroupsSidebarProps) =
       return;
     }
 
-    // Add creator as admin member
     await supabase
       .from("group_members")
       .insert({ group_id: data.id, user_id: user.id, role: "admin" });
@@ -93,8 +92,6 @@ const GroupsSidebar = ({ selectedGroupId, onSelectGroup }: GroupsSidebarProps) =
     if (!user || !inviteCode.trim()) return;
     setLoading(true);
 
-    // Find group by invite code - we need a different approach since RLS blocks non-members
-    // Use a direct query approach
     const { data: group, error: findErr } = await supabase
       .from("groups")
       .select("id, name")
@@ -171,7 +168,7 @@ const GroupsSidebar = ({ selectedGroupId, onSelectGroup }: GroupsSidebarProps) =
               key={group.id}
               onClick={() => onSelectGroup(group.id)}
               className={cn(
-                "w-full flex items-center justify-between p-3 rounded-lg text-left text-sm transition-all",
+                "w-full flex items-center justify-between p-3 rounded-lg text-left text-sm transition-all group",
                 selectedGroupId === group.id
                   ? "bg-primary/10 border border-primary/30 text-primary"
                   : "hover:bg-muted/50 text-muted-foreground"
@@ -208,58 +205,34 @@ const GroupsSidebar = ({ selectedGroupId, onSelectGroup }: GroupsSidebarProps) =
         </div>
       </div>
 
-      {/* Create Group Dialog */}
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent className="bg-card border-border">
           <DialogHeader>
             <DialogTitle className="font-display">Create Group</DialogTitle>
+            <DialogDescription>Create a new accountability group and invite friends.</DialogDescription>
           </DialogHeader>
           <form onSubmit={createGroup} className="space-y-4">
-            <Input
-              placeholder="Group name"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-              className="bg-muted border-border"
-              required
-            />
-            <Input
-              placeholder="Description (optional)"
-              value={groupDesc}
-              onChange={(e) => setGroupDesc(e.target.value)}
-              className="bg-muted border-border"
-            />
-            <Button variant="hero" type="submit" className="w-full" disabled={loading}>
-              Create Group
-            </Button>
+            <Input placeholder="Group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} className="bg-muted border-border" required />
+            <Input placeholder="Description (optional)" value={groupDesc} onChange={(e) => setGroupDesc(e.target.value)} className="bg-muted border-border" />
+            <Button variant="hero" type="submit" className="w-full" disabled={loading}>Create Group</Button>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Join Group Dialog */}
       <Dialog open={showJoin} onOpenChange={setShowJoin}>
         <DialogContent className="bg-card border-border">
           <DialogHeader>
             <DialogTitle className="font-display">Join Group</DialogTitle>
+            <DialogDescription>Enter the invite code shared by a group member.</DialogDescription>
           </DialogHeader>
           <form onSubmit={joinGroup} className="space-y-4">
-            <Input
-              placeholder="Enter invite code"
-              value={inviteCode}
-              onChange={(e) => setInviteCode(e.target.value)}
-              className="bg-muted border-border"
-              required
-            />
-            <Button variant="hero" type="submit" className="w-full" disabled={loading}>
-              Join Group
-            </Button>
+            <Input placeholder="Enter invite code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} className="bg-muted border-border" required />
+            <Button variant="hero" type="submit" className="w-full" disabled={loading}>Join Group</Button>
           </form>
         </DialogContent>
       </Dialog>
     </>
   );
 };
-
-// Need to import Target
-import { Target } from "lucide-react";
 
 export default GroupsSidebar;
