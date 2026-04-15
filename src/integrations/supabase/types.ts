@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          group_id: string | null
+          id: string
+          image_url: string | null
+          message: string | null
+          message_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          group_id?: string | null
+          id?: string
+          image_url?: string | null
+          message?: string | null
+          message_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          group_id?: string | null
+          id?: string
+          image_url?: string | null
+          message?: string | null
+          message_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dare_assignments: {
         Row: {
           assigned_to: string

@@ -10,6 +10,7 @@ import GroupsSidebar from "@/components/GroupsSidebar";
 import DarePickerDialog from "@/components/DarePickerDialog";
 import UserProfileDialog from "@/components/UserProfileDialog";
 import CompletionShareDialog from "@/components/CompletionShareDialog";
+import ChatPanel from "@/components/ChatPanel";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -269,6 +270,11 @@ const Dashboard = () => {
             {activeDare && (
               <DareCard onComplete={handleDareComplete} onDismiss={() => setActiveDare(null)} />
             )}
+          </div>
+
+          <div className="mt-8">
+            <h2 className="font-display text-2xl font-bold text-foreground mb-4">Chat</h2>
+            <ChatPanel selectedGroupId={selectedGroupId} />
           </div>
         </main>
       </div>
