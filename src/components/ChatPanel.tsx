@@ -5,6 +5,7 @@ import { Send, Image, X, Bot, Globe, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import animeThinking from "@/assets/anime-thinking.png";
 
 interface ChatMessage {
   id: string;
@@ -205,10 +206,10 @@ const ChatPanel = ({ selectedGroupId }: ChatPanelProps) => {
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {tab === "ai" ? (
           aiMessages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <Bot className="w-10 h-10 mb-2 opacity-50" />
-              <p className="text-sm">Chat with DareUp AI</p>
-              <p className="text-xs">Your productivity companion</p>
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground animate-fade-in">
+              <img src={animeThinking} alt="AI companion" width={80} height={80} className="mb-2 animate-float" loading="lazy" />
+              <p className="text-sm font-medium">Chat with DareUp AI</p>
+              <p className="text-xs">Your productivity companion 🤖</p>
             </div>
           ) : (
             aiMessages.map((msg, i) => (
