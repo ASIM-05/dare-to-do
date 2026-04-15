@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Trophy, Target, Users, Zap, Flame, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import animeThumbsup from "@/assets/anime-thumbsup.png";
+import animeRunning from "@/assets/anime-running.png";
+import animeCelebrate from "@/assets/anime-celebrate.png";
 
 const features = [
   { icon: Target, title: "Daily Tasks", description: "Set goals, crush them daily. Your tasks, your rules." },
@@ -40,6 +43,23 @@ const LandingPage = () => {
       </nav>
 
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-32 max-w-5xl mx-auto">
+        {/* Floating anime character - left side */}
+        <img
+          src={animeRunning}
+          alt="Anime character running"
+          width={140}
+          height={140}
+          className="absolute left-0 top-16 animate-bounce-slow opacity-80 hidden lg:block pointer-events-none"
+        />
+        {/* Floating anime character - right side */}
+        <img
+          src={animeThumbsup}
+          alt="Anime character thumbs up"
+          width={130}
+          height={130}
+          className="absolute right-4 top-32 animate-float opacity-80 hidden lg:block pointer-events-none"
+        />
+
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/10 mb-8 animate-pulse-glow">
           <Zap className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-primary">Social Accountability Reimagined</span>
@@ -57,10 +77,10 @@ const LandingPage = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button variant="hero" size="lg" className="text-lg px-10 py-6" onClick={handleStart}>
+          <Button variant="hero" size="lg" className="text-lg px-10 py-6 hover-scale" onClick={handleStart}>
             Start Your Streak 🔥
           </Button>
-          <Button variant="outline" size="lg" className="text-lg px-10 py-6 border-muted-foreground/30" onClick={handleStart}>
+          <Button variant="outline" size="lg" className="text-lg px-10 py-6 border-muted-foreground/30 hover-scale" onClick={handleStart}>
             See How It Works
           </Button>
         </div>
@@ -91,7 +111,7 @@ const LandingPage = () => {
           {features.map((feature, i) => (
             <div
               key={feature.title}
-              className="group p-6 rounded-xl bg-card border border-border card-hover"
+              className="group p-6 rounded-xl bg-card border border-border card-hover animate-fade-in"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -105,14 +125,23 @@ const LandingPage = () => {
       </section>
 
       <section className="relative z-10 px-6 pb-32 max-w-4xl mx-auto text-center">
-        <div className="p-12 rounded-2xl bg-card border border-primary/20 glow-primary">
+        <div className="relative p-12 rounded-2xl bg-card border border-primary/20 glow-primary">
+          {/* Celebrating anime character */}
+          <img
+            src={animeCelebrate}
+            alt="Anime character celebrating"
+            width={100}
+            height={100}
+            loading="lazy"
+            className="absolute -top-12 right-8 animate-bounce-slow pointer-events-none"
+          />
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-foreground">
             READY TO GET <span className="text-primary">DISCIPLINED</span>?
           </h2>
           <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
             Join thousands who are crushing their goals through social pressure and gamification.
           </p>
-          <Button variant="hero" size="lg" className="text-lg px-12 py-6" onClick={handleStart}>
+          <Button variant="hero" size="lg" className="text-lg px-12 py-6 hover-scale" onClick={handleStart}>
             Join DareUp Now 🚀
           </Button>
         </div>
