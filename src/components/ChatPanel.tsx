@@ -63,11 +63,12 @@ const ChatPanel = ({ selectedGroupId }: ChatPanelProps) => {
     const channel = supabase
       .channel(`chat-${tab}-${selectedGroupId || "global"}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, (payload) => {
-        const newMsg = payload.new as ChatMessage;
-        if (tab === "global" && newMsg.group_id === null) {
-          setMessages((prev) => [...prev, newMsg]);
-        } else if (tab === "group" && newMsg.group_id === selectedGroupId) {
-          setMessages((prev) => [...prev, newMsg]);
+        const newMsg = payload.new as Record<string, unknown>;
+        const groupId = newMsg.group_id as string | null;
+        if (tab === "global" && groupId === null) {
+          setMessages((prev) => [...prev, newMsg as unknown as ChatMessage]);
+        } else if (tab === "group" && groupId === selectedGroupId) {
+          setMessages((prev) => [...prev, newMsg as unknown as ChatMessage]);
         }
       })
       .subscribe();
