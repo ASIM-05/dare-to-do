@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import animeCelebrate from "@/assets/anime-celebrate.png";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -41,7 +42,8 @@ const CompletionShareDialog = ({ open, onOpenChange, completed, total, streak, p
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-card border-border max-w-sm">
-        <DialogHeader>
+        <DialogHeader className="relative">
+          <img src={animeCelebrate} alt="Celebrating!" width={70} height={70} className="absolute -top-14 right-0 animate-bounce-slow pointer-events-none" />
           <DialogTitle className="font-display flex items-center gap-2">
             <Trophy className="w-5 h-5 text-primary" />
             Task Complete! 🎉
