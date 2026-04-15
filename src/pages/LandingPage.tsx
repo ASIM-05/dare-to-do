@@ -17,11 +17,7 @@ const LandingPage = () => {
   const { user } = useAuth();
 
   const handleStart = () => {
-    if (user) {
-      navigate("/dashboard");
-    } else {
-      navigate("/auth");
-    }
+    navigate("/dashboard");
   };
 
   return (
@@ -37,20 +33,9 @@ const LandingPage = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          {user ? (
-            <Button variant="hero" size="lg" onClick={() => navigate("/dashboard")}>
-              Dashboard
-            </Button>
-          ) : (
-            <>
-              <Button variant="ghost" onClick={() => navigate("/auth")}>
-                Sign In
-              </Button>
-              <Button variant="hero" size="lg" onClick={() => navigate("/auth")}>
-                Get Started
-              </Button>
-            </>
-          )}
+          <Button variant="hero" size="lg" onClick={() => navigate("/dashboard")}>
+            Get Started
+          </Button>
         </div>
       </nav>
 
