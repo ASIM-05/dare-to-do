@@ -35,9 +35,7 @@ const LandingPage = () => {
         <div className="flex items-center gap-4">
           <Button variant="hero" size="lg" onClick={() => navigate("/dashboard")}>
             Get Started
-              </Button>
-            </>
-          )}
+          </Button>
         </div>
       </nav>
 
