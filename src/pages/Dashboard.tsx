@@ -206,7 +206,8 @@ const Dashboard = () => {
         </header>
 
         <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <img src={animeThumbsup} alt="" width={60} height={60} className="absolute -top-8 -right-2 animate-bounce-slow pointer-events-none hidden md:block" loading="lazy" />
             <StatsCard icon={Trophy} label="Points" value={points} color="primary" />
             <StatsCard icon={Check} label="Completed" value={completed} color="success" />
             <StatsCard icon={X} label="Failed" value={failed} color="destructive" />
@@ -263,9 +264,10 @@ const Dashboard = () => {
                 <TaskItem key={task.id} task={task} onComplete={completeTask} onFail={failTask} onDelete={deleteTask} />
               ))}
               {tasks.length === 0 && (
-                <div className="text-center py-16 text-muted-foreground">
-                  <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No tasks yet. Add your first task!</p>
+                <div className="text-center py-16 text-muted-foreground animate-fade-in">
+                  <img src={animeThinking} alt="Thinking" width={120} height={120} className="mx-auto mb-4 animate-float" loading="lazy" />
+                  <p className="text-lg font-medium">No tasks yet!</p>
+                  <p className="text-sm">Add your first task and let's get going! 💪</p>
                 </div>
               )}
             </div>
