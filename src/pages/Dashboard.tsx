@@ -14,6 +14,9 @@ import ChatPanel from "@/components/ChatPanel";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import animeThumbsup from "@/assets/anime-thumbsup.png";
+import animeThinking from "@/assets/anime-thinking.png";
+import animeCelebrate from "@/assets/anime-celebrate.png";
 
 export interface Task {
   id: string;
