@@ -37,11 +37,10 @@ const ChatPanel = ({ selectedGroupId }: ChatPanelProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-
   // Fetch messages
   useEffect(() => {
-    if (tab === "ai") return;
+    if (tab === "ai") return undefined;
+    let cancelled = false;
     const fetchMessages = async () => {
       let query = supabase.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(100);
       if (tab === "global") {
@@ -53,14 +52,18 @@ const ChatPanel = ({ selectedGroupId }: ChatPanelProps) => {
         return;
       }
       const { data } = await query;
-      if (data) setMessages(data as ChatMessage[]);
+      if (!cancelled && data) setMessages(data as ChatMessage[]);
     };
     fetchMessages();
+
+    return () => {
+      cancelled = true;
+    };
   }, [tab, selectedGroupId]);
 
   // Realtime subscription
   useEffect(() => {
-    if (tab === "ai") return;
+    if (tab === "ai") return undefined;
     const channel = supabase
       .channel(`chat-${tab}-${selectedGroupId || "global"}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, (payload) => {
@@ -78,7 +81,9 @@ const ChatPanel = ({ selectedGroupId }: ChatPanelProps) => {
     };
   }, [tab, selectedGroupId]);
 
-  useEffect(scrollToBottom, [messages, aiMessages]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, aiMessages]);
 
   const sendMessage = async () => {
     if (!input.trim() || !user) return;
