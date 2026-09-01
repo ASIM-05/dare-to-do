@@ -73,7 +73,9 @@ const ChatPanel = ({ selectedGroupId }: ChatPanelProps) => {
         }
       })
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      void supabase.removeChannel(channel);
+    };
   }, [tab, selectedGroupId]);
 
   useEffect(scrollToBottom, [messages, aiMessages]);
